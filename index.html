@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeFire ProtoTool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            color: #00ff88;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .subtitle {
+            color: #88ffcc;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            color: #1a1a2e;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .tab-content {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #88ffcc;
+            font-weight: 500;
+        }
+
+        textarea, input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        textarea {
+            min-height: 150px;
+        }
+
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            color: #1a1a2e;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .output-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .output-container.active {
+            display: block;
+        }
+
+        .output-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        pre {
+            color: #88ffcc;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 4px solid #00ff88;
+            color: #00ff88;
+            display: block;
+        }
+
+        .status-error {
+            background: rgba(255, 0, 68, 0.1);
+            border-left: 4px solid #ff0044;
+            color: #ff4466;
+            display: block;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 6px;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn.active {
+            background: #00ff88;
+            color: #1a1a2e;
+        }
+
+        .mode-content {
+            display: none;
+        }
+
+        .mode-content.active {
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #88aaff;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .tab-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .tab-content {
+                padding: 20px;
+            }
+            
+            button {
+                padding: 12px 24px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>FreeFire ProtoTool</h1>
+            <p class="subtitle">Decode/Encode FreeFire Protobuf Messages with AES Encryption</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('decodeResponse')">Decode Response</button>
+            <button class="tab-btn" onclick="switchTab('decodeRequest')">Decode Request Sent</button>
+            <button class="tab-btn" onclick="switchTab('encodeUid')">Encode UID</button>
+        </div>
+
+        <!-- Decode Response Tab -->
+        <div id="decodeResponse" class="tab-content active">
+            <div class="input-group">
+                <label for="responseBase64">Base64 Encoded Response:</label>
+                <textarea id="responseBase64" placeholder="Paste your Base64 encoded response here..."></textarea>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn-primary" onclick="decodeResponse()">
+                    <span>🔓 Decode Response</span>
+                </button>
+                <button class="btn-secondary" onclick="clearOutput('response')">
+                    <span>🗑️ Clear</span>
+                </button>
+            </div>
+
+            <div id="responseStatus" class="status-message"></div>
+            
+            <div id="responseOutput" class="output-container">
+                <label>Decoded Output:</label>
+                <div class="output-box">
+                    <pre id="responseOutputText"></pre>
+                    <button class="copy-btn" onclick="copyToClipboard('responseOutputText')">📋 Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decode Request Sent Tab -->
+        <div id="decodeRequest" class="tab-content">
+            <div class="mode-selector">
+                <button class="mode-btn active" onclick="switchMode('decodeBase64')">Decrypt Base64</button>
+                <button class="mode-btn" onclick="switchMode('decodeHex')">Decrypt Hex</button>
+            </div>
+
+            <div id="decodeBase64" class="mode-content active">
+                <div class="input-group">
+                    <label for="requestBase64">Encrypted Base64 Request:</label>
+                    <textarea id="requestBase64" placeholder="Paste encrypted Base64 string (from 'text' field)..."></textarea>
+                </div>
+            </div>
+
+            <div id="decodeHex" class="mode-content">
+                <div class="input-group">
+                    <label for="requestHex">Encrypted Hex String:</label>
+                    <textarea id="requestHex" placeholder="Paste encrypted hex string..."></textarea>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn-primary" onclick="decodeRequest()">
+                    <span>🔓 Decrypt & Decode</span>
+                </button>
+                <button class="btn-secondary" onclick="clearOutput('request')">
+                    <span>🗑️ Clear</span>
+                </button>
+            </div>
+
+            <div id="requestStatus" class="status-message"></div>
+            
+            <div id="requestOutput" class="output-container">
+                <label>Decrypted Output:</label>
+                <div class="output-box">
+                    <pre id="requestOutputText"></pre>
+                    <button class="copy-btn" onclick="copyToClipboard('requestOutputText')">📋 Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Encode UID Tab -->
+        <div id="encodeUid" class="tab-content">
+            <div class="mode-selector">
+                <button class="mode-btn active" onclick="switchEncodeMode('encodeUidMode')">Encode UID</button>
+                <button class="mode-btn" onclick="switchEncodeMode('encodeHexMode')">Encode Custom Hex</button>
+            </div>
+
+            <div id="encodeUidMode" class="mode-content active">
+                <div class="input-group">
+                    <label for="uidInput">User ID (UID):</label>
+                    <input type="number" id="uidInput" placeholder="Enter UID (e.g., 14050711645)">
+                </div>
+            </div>
+
+            <div id="encodeHexMode" class="mode-content">
+                <div class="input-group">
+                    <label for="customHex">Protobuf Hex String:</label>
+                    <textarea id="customHex" placeholder="Enter Protobuf Hex (e.g., 08011204...)"></textarea>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn-primary" onclick="encodeUid()">
+                    <span>🔐 Encode & Encrypt</span>
+                </button>
+                <button class="btn-secondary" onclick="clearOutput('encode')">
+                    <span>🗑️ Clear</span>
+                </button>
+            </div>
+
+            <div id="encodeStatus" class="status-message"></div>
+            
+            <div id="encodeOutput" class="output-container">
+                <label>Encrypted Payload:</label>
+                <div class="output-box">
+                    <pre id="encodeOutputText"></pre>
+                    <button class="copy-btn" onclick="copyToClipboard('encodeOutputText')">📋 Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>FreeFire ProtoTool v1.0 | Compatible with all 3 original scripts | Ready for Vercel Deployment</p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Activate clicked button
+            event.target.classList.add('active');
+            
+            // Clear all outputs
+            clearAllOutputs();
+        }
+
+        // Mode switching for decode request
+        function switchMode(modeName) {
+            // Hide all mode contents
+            document.querySelectorAll('#decodeRequest .mode-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('#decodeRequest .mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected mode
+            document.getElementById(modeName).classList.add('active');
+            
+            // Activate clicked button
+            event.target.classList.add('active');
+        }
+
+        // Mode switching for encode
+        function switchEncodeMode(modeName) {
+            // Hide all mode contents
+            document.querySelectorAll('#encodeUid .mode-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('#encodeUid .mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected mode
+            document.getElementById(modeName).classList.add('active');
+            
+            // Activate clicked button
+            event.target.classList.add('active');
+        }
+
+        // Clear outputs
+        function clearOutput(type) {
+            if (type === 'response') {
+                document.getElementById('responseBase64').value = '';
+                document.getElementById('responseOutput').classList.remove('active');
+                document.getElementById('responseStatus').className = 'status-message';
+            } else if (type === 'request') {
+                document.getElementById('requestBase64').value = '';
+                document.getElementById('requestHex').value = '';
+                document.getElementById('requestOutput').classList.remove('active');
+                document.getElementById('requestStatus').className = 'status-message';
+            } else if (type === 'encode') {
+                document.getElementById('uidInput').value = '';
+                document.getElementById('customHex').value = '';
+                document.getElementById('encodeOutput').classList.remove('active');
+                document.getElementById('encodeStatus').className = 'status-message';
+            }
+        }
+
+        function clearAllOutputs() {
+            clearOutput('response');
+            clearOutput('request');
+            clearOutput('encode');
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // Show status message
+        function showStatus(elementId, message, isError = false) {
+            const statusEl = document.getElementById(elementId);
+            statusEl.textContent = message;
+            statusEl.className = `status-message ${isError ? 'status-error' : 'status-success'}`;
+        }
+
+        // Decode Response
+        async function decodeResponse() {
+            const base64Input = document.getElementById('responseBase64').value.trim();
+            
+            if (!base64Input) {
+                showStatus('responseStatus', '❌ Please enter Base64 data!', true);
+                return;
+            }
+
+            showStatus('responseStatus', '⏳ Decoding...', false);
+
+            try {
+                const response = await fetch('/decode_response', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ data: base64Input })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('responseOutputText').textContent = result.output;
+                    document.getElementById('responseOutput').classList.add('active');
+                    showStatus('responseStatus', result.message, false);
+                } else {
+                    showStatus('responseStatus', result.error, true);
+                }
+            } catch (error) {
+                showStatus('responseStatus', `❌ Network Error: ${error}`, true);
+            }
+        }
+
+        // Decode Request
+        async function decodeRequest() {
+            let inputData = '';
+            const base64Active = document.getElementById('decodeBase64').classList.contains('active');
+            
+            if (base64Active) {
+                inputData = document.getElementById('requestBase64').value.trim();
+            } else {
+                const hexInput = document.getElementById('requestHex').value.trim().replace(/\s/g, '');
+                if (hexInput) {
+                    try {
+                        // Convert hex to base64
+                        const bytes = new Uint8Array(hexInput.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+                        inputData = btoa(String.fromCharCode.apply(null, bytes));
+                    } catch (e) {
+                        showStatus('requestStatus', '❌ Invalid hex format!', true);
+                        return;
+                    }
+                }
+            }
+
+            if (!inputData) {
+                showStatus('requestStatus', '❌ Please enter data!', true);
+                return;
+            }
+
+            showStatus('requestStatus', '⏳ Decrypting...', false);
+
+            try {
+                const response = await fetch('/decode_request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ data: inputData })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    let outputText = `Decrypted Hex: ${result.decrypted_hex}\n\n`;
+                    outputText += `Decoded JSON:\n${result.output}`;
+                    
+                    document.getElementById('requestOutputText').textContent = outputText;
+                    document.getElementById('requestOutput').classList.add('active');
+                    showStatus('requestStatus', result.message, false);
+                } else {
+                    showStatus('requestStatus', result.error, true);
+                }
+            } catch (error) {
+                showStatus('requestStatus', `❌ Network Error: ${error}`, true);
+            }
+        }
+
+        // Encode UID
+        async function encodeUid() {
+            const uidActive = document.getElementById('encodeUidMode').classList.contains('active');
+            
+            showStatus('encodeStatus', '⏳ Encoding...', false);
+
+            try {
+                let response;
+                
+                if (uidActive) {
+                    const uidInput = document.getElementById('uidInput').value.trim();
+                    
+                    if (!uidInput) {
+                        showStatus('encodeStatus', '❌ Please enter UID!', true);
+                        return;
+                    }
+
+                    response = await fetch('/encode_uid', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ uid: uidInput })
+                    });
+                } else {
+                    const hexInput = document.getElementById('customHex').value.trim().replace(/\s/g, '');
+                    
+                    if (!hexInput) {
+                        showStatus('encodeStatus', '❌ Please enter hex data!', true);
+                        return;
+                    }
+
+                    response = await fetch('/encode_custom', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ hex: hexInput })
+                    });
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    let outputText = '';
+                    
+                    if (result.proto_hex) {
+                        outputText += `Protobuf Hex: ${result.proto_hex}\n\n`;
+                    }
+                    
+                    outputText += `Base64 Payload:\n${result.payload}`;
+                    
+                    document.getElementById('encodeOutputText').textContent = outputText;
+                    document.getElementById('encodeOutput').classList.add('active');
+                    showStatus('encodeStatus', result.message, false);
+                } else {
+                    showStatus('encodeStatus', result.error, true);
+                }
+            } catch (error) {
+                showStatus('encodeStatus', `❌ Network Error: ${error}`, true);
+            }
+        }
+
+        // Add example data buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            // You can add example buttons here if needed
+            console.log('FreeFire ProtoTool Web App Loaded!');
+        });
+    </script>
+</body>
+</html>
