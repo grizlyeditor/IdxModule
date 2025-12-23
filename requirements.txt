@@ -1,4 +1,4 @@
 Flask==2.3.3
-blackboxprotobuf==1.0.4
+blackboxprotobuf
 pycryptodome==3.19.0
 gunicorn==20.1.0
